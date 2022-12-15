@@ -1,6 +1,6 @@
 {
-  "name": "koa-swagger-decorator",
-  "version": "1.8.6",
+  "name": "@warriortrading/koa-swagger-decorator",
+  "version": "1.8.7",
   "description": "using decorator to automatically generate swagger doc for koa-router",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -66,5 +66,5 @@
   ],
   "author": "cody",
   "license": "MIT",
-  "repository": "https://github.com/Cody2333/koa-swagger-decorator"
+  "repository": "https://github.com/WarriorTrading/koa-swagger-decorator"
 }
