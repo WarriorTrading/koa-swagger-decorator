@@ -1,19 +1,19 @@
-# koa-swagger-decorator
+# @warriortrading/koa-swagger-decorator
 
 > using decorator to auto generate swagger json docs
 
 [![build status][travis-image]][travis-url]
-[![npm](https://img.shields.io/npm/l/express.svg)](https://www.npmjs.com/package/koa-swagger-decorator)
+[![npm](https://img.shields.io/npm/l/express.svg)](https://www.npmjs.com/package/@warriortrading/koa-swagger-decorator)
 
 ## Installation
 
 ```bash
-npm install koa-swagger-decorator
+npm install @warriortrading/koa-swagger-decorator
 ```
 
 ## Contributing Guide
 
-Please refer to [contribution.md](https://github.com/Cody2333/koa-swagger-decorator/blob/master/CONTRIBUTING.md) before creating your PR or issue.
+Please refer to [contribution.md](https://github.com/Cody2333/@warriortrading/koa-swagger-decorator/blob/master/CONTRIBUTING.md) before creating your PR or issue.
 
 ## Introduction
 
@@ -30,9 +30,9 @@ support both javascript (babel required) and typescript
 ```bash
 // using commonds below to start and test the example server
 
-git clone https://github.com/Cody2333/koa-swagger-decorator.git
+git clone https://github.com/Cody2333/@warriortrading/koa-swagger-decorator.git
 
-cd koa-swagger-decorator
+cd @warriortrading/koa-swagger-decorator
 
 npm install
 
@@ -63,7 +63,7 @@ npm install --save-dev babel-plugin-transform-decorators-legacy
 
 ### Detail
 
-for more detail please take a look at the [example koa server](https://github.com/Cody2333/koa-swagger-decorator/tree/master/example)
+for more detail please take a look at the [example koa server](https://github.com/Cody2333/@warriortrading/koa-swagger-decorator/tree/master/example)
 
 #### first wrapper the @koa/router object
 
@@ -73,7 +73,7 @@ import Router from '@koa/router'
 
 import Test from './test'
 
-import { SwaggerRouter } from 'koa-swagger-decorator'
+import { SwaggerRouter } from '@warriortrading/koa-swagger-decorator'
 
 const router = new SwaggerRouter([KoaRouterOpts],[SwaggerOpts]) // extends from koa-router
 
@@ -84,7 +84,7 @@ router.swagger({
   version: '1.0.0',
 
   // [optional] default is root path.
-  // if you are using koa-swagger-decorator within nested router, using this param to let swagger know your current router point
+  // if you are using @warriortrading/koa-swagger-decorator within nested router, using this param to let swagger know your current router point
   prefix: '/api',
 
   // [optional] default is /swagger-html
@@ -134,7 +134,7 @@ router.mapDir(_path.resolve(__dirname), {
 // test.js
 
 import User from 'models/user'
-import { request, summary, query, path, body, tags } from 'koa-swagger-decorator'
+import { request, summary, query, path, body, tags } from '@warriortrading/koa-swagger-decorator'
 
 const testTag = tags(['test'])
 
@@ -193,7 +193,7 @@ export default class Test {
 #### using decorator to make api body
 ```typescript
 import Router from '@koa/router';
-import { request, summary, query, path, body, tags, swaggerClass, swaggerProperty } from 'koa-swagger-decorator'
+import { request, summary, query, path, body, tags, swaggerClass, swaggerProperty } from '@warriortrading/koa-swagger-decorator'
 
 @swaggerClass()
 export class subObject {
@@ -333,6 +333,6 @@ router.dumpSwaggerJson({
 
 © MIT
 
-[npm-url]: https://npmjs.org/package/koa-swagger-decorator
-[travis-image]: https://travis-ci.org/Cody2333/koa-swagger-decorator.svg?branch=develop
-[travis-url]: https://travis-ci.org/Cody2333/koa-swagger-decorator
+[npm-url]: https://npmjs.org/package/@warriortrading/koa-swagger-decorator
+[travis-image]: https://travis-ci.org/Cody2333/@warriortrading/koa-swagger-decorator.svg?branch=develop
+[travis-url]: https://travis-ci.org/Cody2333/@warriortrading/koa-swagger-decorator

@@ -1,6 +1,6 @@
 ## Contributing Guide
 
-Hi, Thank you for your attention to koa-swagger-decorator
+Hi, Thank you for your attention to @warriortrading/koa-swagger-decorator
 
 If you are willing to contribute code or provide suggestions, please make sure to take a moment and read through the following guidelines.
 

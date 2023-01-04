@@ -1,32 +1,42 @@
-import init from './swaggerTemplate';
-import { getPath, sortObject } from './utils';
-import { Dictionary } from 'ramda';
+import init from "./swaggerTemplate";
+import { getPath, sortObject } from "./utils";
+import { Dictionary } from "ramda";
 /**
  * build swagger json from apiObjects
  */
-const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
+const swaggerJSON = (
+  options: { [name: string]: any } = {},
+  apiObjects: any
+) => {
   const {
     title,
     description,
     version,
-    prefix = '',
-    swaggerOptions = {}
+    prefix = "",
+    definitions = {},
+    swaggerOptions = {},
   } = options;
-  const swaggerJSON: any = init(title, description, version, swaggerOptions);
-  const paths: Dictionary<{[method: string]: any}> = {};
+  const swaggerJSON: any = init(
+    title,
+    description,
+    version,
+    swaggerOptions,
+    definitions
+  );
+  const paths: Dictionary<{ [method: string]: any }> = {};
   Object.keys(apiObjects).forEach((key) => {
     const value = apiObjects[key];
-    if (!Object.keys(value).includes('request')) {
+    if (!Object.keys(value).includes("request")) {
       return;
     }
 
     const { method } = value.request;
     let { path } = value.request;
     path = getPath(prefix, value.prefix ? `${value.prefix}${path}` : path); // 根据前缀补全path
-    const summary = value.summary || '';
+    const summary = value.summary || "";
     const description = value.description || summary;
     const responses = value.responses || {
-      200: { description: 'success' }
+      200: { description: "success" },
     };
     const {
       query = [],
@@ -37,10 +47,16 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
       tags,
       formData = [],
       security,
-      deprecated
+      deprecated,
     } = value;
 
-    const parameters = [...pathParams, ...query, ...header, ...formData, ...body];
+    const parameters = [
+      ...pathParams,
+      ...query,
+      ...header,
+      ...formData,
+      ...body,
+    ];
 
     // init path object first
     if (!paths[path]) {
@@ -48,7 +64,7 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
     }
 
     // add content type [multipart/form-data] to support file upload
-    const consumes = formData.length > 0 ? ['multipart/form-data'] : undefined;
+    const consumes = formData.length > 0 ? ["multipart/form-data"] : undefined;
 
     paths[path][method] = {
       consumes,
@@ -58,16 +74,20 @@ const swaggerJSON = (options: {[name: string]: any} = {}, apiObjects: any) => {
       responses,
       tags,
       security,
-      deprecated
+      deprecated,
     };
     if (!paths[path]._order) {
       paths[path]._order = order;
     }
   });
-  swaggerJSON.paths = sortObject(paths, (path, length) => path._order || length, (path) => {
-    const { _order, ...restOfPathData} = path;
-    return restOfPathData;
-  });
+  swaggerJSON.paths = sortObject(
+    paths,
+    (path, length) => path._order || length,
+    (path) => {
+      const { _order, ...restOfPathData } = path;
+      return restOfPathData;
+    }
+  );
   return swaggerJSON;
 };
 

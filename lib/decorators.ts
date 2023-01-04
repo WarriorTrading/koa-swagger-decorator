@@ -2,6 +2,7 @@
 import is from 'is-type-of';
 import { curry, toLower, clone } from 'ramda';
 import swaggerObject from './swaggerObject';
+import { buildRefString } from './utils';
 
 const _desc = (type: string, text: string | any[]) => (
   target: any,
@@ -39,10 +40,11 @@ const _params = (type: string, parameters: { [name: string]: any }) => (
           name: 'data',
           description: 'request body',
           schema: {
-            $ref: parameters.$ref
+            $ref: buildRefString(parameters.$ref)
           }
         }
       ];
+      if(parameters.isArray === true) swaggerParameters.schema.type = 'array'
     } else {
       swaggerParameters = [
         {
@@ -116,8 +118,8 @@ const deprecated = (
 };
 
 export interface IResponses {
-  [name: number]: any;
-}
+  [name: number | string]: any;
+} 
 const defaultResp: IResponses = {
   200: { description: 'success' }
 };
@@ -126,6 +128,15 @@ const responses = (responses: IResponses = defaultResp) => (
   name: string,
   descriptor: PropertyDescriptor
 ) => {
+  Object.keys(responses).forEach((key)=> {
+    if(key === 'schema') {
+      const okResponse =  responses[key]
+      okResponse.$ref = buildRefString(okResponse.$ref)
+      if(okResponse.isArray === true) okResponse.type = 'array'
+      responses[200] = okResponse
+      delete responses[key]
+    }
+  })
   descriptor.value.responses = responses;
   swaggerObject.add(target, name, { responses });
   return descriptor;

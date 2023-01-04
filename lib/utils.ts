@@ -1,49 +1,52 @@
-import _path from 'path';
-import globby from 'globby';
-import is from 'is-type-of';
-import { Dictionary } from 'ramda';
-
+import _path from "path";
+import globby from "globby";
+import is from "is-type-of";
+import { Dictionary } from "ramda";
 
 // eg. /api/{id} -> /api/:id
 const convertPath = (path: string) => {
-  const re = new RegExp('{(.*?)}', 'g');
-  return path.replace(re, ':$1');
+  const re = new RegExp("{(.*?)}", "g");
+  return path.replace(re, ":$1");
 };
 
 const getPath = (prefix: string, path: string) =>
-  `${prefix}${path}`.replace('//', '/');
+  `${prefix}${path}`.replace("//", "/");
 
 const reservedMethodNames = [
-  'middlewares',
-  'name',
-  'constructor',
-  'length',
-  'prototype',
-  'parameters',
-  'prefix',
+  "middlewares",
+  "name",
+  "constructor",
+  "length",
+  "prototype",
+  "parameters",
+  "prefix",
 ];
 
 enum allowedMethods {
-  GET = 'get',
-  POST = 'post',
-  PUT = 'put',
-  PATCH = 'patch',
-  DELETE = 'delete'
+  GET = "get",
+  POST = "post",
+  PUT = "put",
+  PATCH = "patch",
+  DELETE = "delete",
 }
 
-const getFilepaths = (dir: string, recursive: boolean = true, ignore: string[] = []) => {
-  const ignoreDirs = ignore.map((path => `!${path}`));
+const getFilepaths = (
+  dir: string,
+  recursive: boolean = true,
+  ignore: string[] = []
+) => {
+  const ignoreDirs = ignore.map((path) => `!${path}`);
   const paths = recursive
-    ? globby.sync(['**/*.js', '**/*.ts', ...ignoreDirs], { cwd: dir })
-    : globby.sync(['*.js', '*.ts', ...ignoreDirs], { cwd: dir });
-  return paths.map(path => _path.join(dir, path));
+    ? globby.sync(["**/*.js", "**/*.ts", ...ignoreDirs], { cwd: dir })
+    : globby.sync(["*.js", "*.ts", ...ignoreDirs], { cwd: dir });
+  return paths.map((path) => _path.join(dir, path));
 };
 
 const loadModule = (filepath: string) => {
   const obj = require(filepath);
   if (!obj) return obj;
   // it's es module
-  if (obj.__esModule) return 'default' in obj ? obj.default : obj;
+  if (obj.__esModule) return "default" in obj ? obj.default : obj;
   return obj;
 };
 
@@ -53,15 +56,19 @@ const loadClass = (filepath: string) => {
   return false;
 };
 
-const loadSwaggerClasses = (dir: string = '', options: { recursive?: boolean; ignore?: string[] } = {}) => {
+const loadSwaggerClasses = (
+  dir: string = "",
+  options: { recursive?: boolean; ignore?: string[] } = {}
+) => {
   dir = _path.resolve(dir);
   const { recursive = true } = options;
   return getFilepaths(dir, recursive, options.ignore)
-    .map(filepath => loadClass(filepath))
-    .filter(cls => cls);
+    .map((filepath) => loadClass(filepath))
+    .filter((cls) => cls);
 };
 
-const swaggerKeys = (className: String, methods: [String]) => methods.map(m => `${className}- ${m}`);
+const swaggerKeys = (className: String, methods: [String]) =>
+  methods.map((m) => `${className}- ${m}`);
 
 /**
  * Sorts an object (dictionary) by value returned by the valSelector function.
@@ -70,12 +77,17 @@ const swaggerKeys = (className: String, methods: [String]) => methods.map(m => `
 const sortObject = <TValue>(
   obj: Dictionary<TValue>,
   comparisonSelector: (val: TValue, length: number) => number | string,
-  callbackFn?: (val: TValue) => TValue,
+  callbackFn?: (val: TValue) => TValue
 ) => {
   const unsortedKeys = Object.keys(obj);
-  const sortedKeys = unsortedKeys.sort((a, b) => (
-    comparisonSelector(obj[a], unsortedKeys.length) > comparisonSelector(obj[b], unsortedKeys.length) ? 1 :
-      comparisonSelector(obj[a], unsortedKeys.length) < comparisonSelector(obj[b], unsortedKeys.length) ? -1 : 0)
+  const sortedKeys = unsortedKeys.sort((a, b) =>
+    comparisonSelector(obj[a], unsortedKeys.length) >
+    comparisonSelector(obj[b], unsortedKeys.length)
+      ? 1
+      : comparisonSelector(obj[a], unsortedKeys.length) <
+        comparisonSelector(obj[b], unsortedKeys.length)
+      ? -1
+      : 0
   );
 
   return sortedKeys.reduce((sorted: Dictionary<TValue>, k) => {
@@ -88,6 +100,44 @@ const sortObject = <TValue>(
   }, {});
 };
 
+const buildRefString = (data: { name: string }) => {
+  return `#/definitions/${data.name}`;
+};
+
+const buildSchema = (data: { name: string }) => {
+  return { $ref: buildRefString(data) };
+};
+
+const buildOkResSchema = (data: { name: string } | string) => {
+  if (typeof data === "string") {
+    return {
+      200: {
+        schema: data,
+      },
+    };
+  }
+  return {
+    200: {
+      schema: buildSchema(data),
+    },
+  };
+};
+
+const buildArraySchema = (data: { name: string }) => {
+  return {
+    items: buildSchema(data),
+    type: "array",
+  };
+};
+
+const buildOkResArraySchema = (data: { name: string }) => {
+  return {
+    200: {
+      schema: buildArraySchema(data),
+    },
+  };
+};
+
 export {
   convertPath,
   getPath,
@@ -98,4 +148,8 @@ export {
   allowedMethods,
   swaggerKeys,
   sortObject,
+  buildRefString,
+  buildSchema,
+  buildOkResSchema,
+  buildOkResArraySchema,
 };
