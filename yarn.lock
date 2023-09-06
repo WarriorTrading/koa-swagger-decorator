@@ -3888,10 +3888,10 @@ koa-static@^4.0.3:
     debug "^3.1.0"
     koa-send "^4.1.3"
 
-koa2-swagger-ui@^5.3.0:
-  version "5.6.0"
-  resolved "https://registry.npmjs.org/koa2-swagger-ui/-/koa2-swagger-ui-5.6.0.tgz#2e4835504c482db8d565775ed85f9cb962188fa3"
-  integrity sha512-zQrHMv2SiIWrHfppv4gBFuxu5hLcfS7lGS9xE91SXjKY0GTwohQMUODL94hMXpLHoRdnBnHkthoXCdJsGoefGg==
+koa2-swagger-ui@5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/koa2-swagger-ui/-/koa2-swagger-ui-5.3.0.tgz#bff4e85cc982a977513f97a9e6b6c2bbfb0cd1f0"
+  integrity sha512-a+lFxLJTFZ6N05Y6tEonNW0RIuIExME8wLWbUqsMFI7ybpqyVp/o6YLz9hDx4GI9eqTJaThCYIFxRo0Fq3SIwg==
   dependencies:
     "@types/koa" "^2.13.4"
     handlebars "^4.7.7"
